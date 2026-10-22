@@ -10,8 +10,7 @@
   [![Tailwind CSS 4](https://img.shields.io/badge/Tailwind-4-38bdf8.svg)](https://tailwindcss.com)
   [![Next.js 16](https://img.shields.io/badge/Next.js-16-black.svg)](https://nextjs.org)
 
-  [GitHub](https://github.com/LuanTTran/peachUI) · [Browse the catalog](#whats-inside)
-  <!-- TODO(live-url): add deployed catalog link, e.g. "· [Live catalog](https://...)" -->
+  [Live catalog](https://peach-ui-plum.vercel.app/) · [GitHub](https://github.com/LuanTTran/peachUI) · [Browse the catalog](#whats-inside)
 </div>
 
 ---
