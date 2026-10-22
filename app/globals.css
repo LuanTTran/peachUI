@@ -1,0 +1,2687 @@
+@import "tailwindcss";
+@import "./typography.css";
+
+/* ── PeachUI — self-hosted UI face: Source Sans 3 (SIL OFL) ──
+   Weight ramp: light 300 (placeholder/hint only) · regular 400 ·
+   medium 500 · semibold 600. The semibold face also covers 700 so
+   `font-bold` / `*-bold` utilities resolve to real semibold outlines
+   (body sets `font-synthesis: none`, no faux bold). */
+@font-face {
+  font-family: "Source Sans 3";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("/font/SourceSans3-Light.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Source Sans 3";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/font/SourceSans3-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Source Sans 3";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/font/SourceSans3-Medium.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Source Sans 3";
+  font-style: normal;
+  font-weight: 600 700;
+  font-display: swap;
+  src: url("/font/SourceSans3-SemiBold.ttf") format("truetype");
+}
+
+@theme {
+  --shadow-xs: 0 1px 2px oklch(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 3px oklch(0 0 0 / 0.08), 0 1px 2px oklch(0 0 0 / 0.04);
+  --shadow-md: 0 4px 6px oklch(0 0 0 / 0.07), 0 2px 4px oklch(0 0 0 / 0.05);
+  --shadow-lg: 0 10px 15px oklch(0 0 0 / 0.08), 0 4px 6px oklch(0 0 0 / 0.05);
+  --shadow-xl: 0 20px 25px oklch(0 0 0 / 0.1), 0 8px 10px oklch(0 0 0 / 0.05);
+  --shadow-2xl: 0 25px 50px oklch(0 0 0 / 0.15);
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ──────────────────────────────────────────────────────────
+ * PeachUI — design tokens (v3 palette)
+ * Light: neutral gray chrome + BoardUI blue accent (~255–268°).
+ * Dark: neutral charcoal surfaces + the same semantic families at lower chroma.
+ * ────────────────────────────────────────────────────────── */
+
+:root {
+  /* BoardUI accent — blue */
+  --color-accent-50: oklch(97% 0.014 254.604);
+  --color-accent-100: oklch(93.2% 0.032 255.585);
+  --color-accent-200: oklch(88.2% 0.059 254.128);
+  --color-accent-300: oklch(80.9% 0.105 251.813);
+  --color-accent-400: oklch(70.7% 0.165 254.624);
+  --color-accent-500: oklch(62.3% 0.214 259.815);
+  --color-accent-600: oklch(54.6% 0.245 262.881);
+  --color-accent-700: oklch(48.8% 0.243 264.376);
+  --color-accent-800: oklch(42.4% 0.199 265.638);
+  --color-accent-900: oklch(37.9% 0.146 265.522);
+  --color-accent-950: oklch(28.2% 0.091 267.935);
+
+  /* surfaces — neutral chrome (no hue cast on cards / panels) */
+  --page: oklch(0.995 0 0);
+  --canvas: oklch(0.972 0 0);
+  --surface: oklch(1 0 0);
+  --inset: oklch(0.965 0 0);
+  --hover: oklch(0.955 0 0);
+  --hover-2: oklch(0.938 0 0);
+
+  /* ink ramp — neutral graphite */
+  --ink: oklch(0.22 0.012 265);
+  --ink-2: oklch(0.5 0.01 265);
+  --ink-3: oklch(0.64 0.008 265);
+
+  /* borders — hairline structure */
+  --line: oklch(0.91 0.004 265);
+  --line-strong: oklch(0.86 0.005 265);
+  --line-soft: oklch(0.945 0.003 265);
+  --grid-line: color-mix(in srgb, var(--line) 78%, transparent);
+  --field: oklch(1 0 0);
+  --stripe: oklch(0.22 0.012 265 / 0.03);
+  --stripe-bg: var(--canvas);
+
+  /* semantic families — accent from BoardUI scale */
+  --accent: var(--color-accent-600);
+  --accent-ink: var(--color-accent-800);
+  --accent-muted: var(--color-accent-100);
+
+  --schedule: oklch(0.5 0.065 228);
+  --schedule-muted: oklch(0.955 0.018 228);
+
+  --green: oklch(0.48 0.065 158);
+  --green-muted: oklch(0.955 0.02 158);
+
+  --red: oklch(0.51 0.075 22);
+  --red-muted: oklch(0.955 0.018 22);
+
+  --orange: var(--accent);
+  --orange-muted: var(--accent-muted);
+  --people: var(--accent);
+  --people-muted: var(--accent-muted);
+
+  --warning: oklch(0.55 0.09 75);
+  --warning-muted: oklch(0.96 0.03 85);
+
+  --violet: oklch(0.52 0.12 295);
+  --violet-muted: oklch(0.955 0.025 295);
+
+  /* content on solid accent fills (switch thumb, selected chips) */
+  --on-accent: oklch(1 0 0);
+
+  /* charts — series + structure */
+  --chart-1: oklch(0.7 0.14 254);
+  --chart-1-active: oklch(0.62 0.19 259);
+  --chart-2: oklch(0.78 0.11 158);
+  --chart-2-active: oklch(0.68 0.12 158);
+  --chart-track: var(--line-soft);
+  --chart-cursor: var(--line-strong);
+
+  --disabled: var(--ink-3);
+  --disabled-bg: var(--inset);
+
+  /* chart tooltips — neutral overlay */
+  --tooltip-bg: oklch(0.25 0.01 265);
+  --tooltip-fg: oklch(0.975 0.004 265);
+  --tooltip-muted: oklch(0.7 0.01 265);
+  --tooltip-border: oklch(0.35 0.01 265);
+
+  /* terminal panel — always a dark well */
+  --terminal-bg: oklch(0.2 0.008 265);
+  --terminal-fg: oklch(0.96 0.004 265);
+  --terminal-fg-muted: oklch(0.72 0.01 265);
+  --terminal-fg-subtle: oklch(0.58 0.012 265);
+  --terminal-border: oklch(1 0 0 / 0.1);
+  --terminal-hover: oklch(1 0 0 / 0.08);
+  --terminal-caret: oklch(0.96 0.004 265 / 0.9);
+
+  /* typography stacks */
+  --font-peachy-sans: "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+  --font-inter: var(--font-peachy-sans);
+  --font-peachy-mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --font-mono-face: var(--font-peachy-mono);
+
+  /* focus — shared by :focus-visible and field inset rings */
+  --focus-ring: var(--accent);
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+  --focus-ring-radius: 4px;
+
+  /* emphasis gradients — soft pastel fills, neutral labels */
+  --gradient-accent-fg: var(--ink);
+  --gradient-danger-fg: var(--ink);
+
+  --accent-gradient-top: var(--color-accent-50);
+  --accent-gradient-bottom: var(--color-accent-100);
+  --accent-gradient-top-hover: oklch(98% 0.016 255);
+  --accent-gradient-bottom-hover: var(--color-accent-200);
+  --accent-gradient-top-active: var(--color-accent-100);
+  --accent-gradient-bottom-active: var(--color-accent-200);
+  --accent-gradient-top-disabled: oklch(0.96 0 0);
+  --accent-gradient-bottom-disabled: oklch(0.92 0 0);
+  --gradient-accent-fg-disabled: var(--ink-3);
+
+  --danger-gradient-top: oklch(0.97 0.022 18);
+  --danger-gradient-bottom: oklch(0.93 0.034 18);
+  --danger-gradient-top-hover: oklch(0.98 0.024 18);
+  --danger-gradient-bottom-hover: oklch(0.945 0.038 18);
+  --danger-gradient-top-active: oklch(0.94 0.03 18);
+  --danger-gradient-bottom-active: oklch(0.9 0.042 18);
+  --danger-gradient-top-disabled: oklch(0.96 0 0);
+  --danger-gradient-bottom-disabled: oklch(0.92 0 0);
+  --gradient-danger-fg-disabled: var(--ink-3);
+
+  --gradient-accent-default: linear-gradient(
+    180deg,
+    var(--accent-gradient-top) 0%,
+    var(--accent-gradient-bottom) 100%
+  );
+  --gradient-accent-hover: linear-gradient(
+    180deg,
+    var(--accent-gradient-top-hover) 0%,
+    var(--accent-gradient-bottom-hover) 100%
+  );
+  --gradient-accent-active: linear-gradient(
+    180deg,
+    var(--accent-gradient-top-active) 0%,
+    var(--accent-gradient-bottom-active) 100%
+  );
+  --gradient-accent-disabled: linear-gradient(
+    180deg,
+    var(--accent-gradient-top-disabled) 0%,
+    var(--accent-gradient-bottom-disabled) 100%
+  );
+
+  --gradient-danger-default: linear-gradient(
+    180deg,
+    var(--danger-gradient-top) 0%,
+    var(--danger-gradient-bottom) 100%
+  );
+  --gradient-danger-hover: linear-gradient(
+    180deg,
+    var(--danger-gradient-top-hover) 0%,
+    var(--danger-gradient-bottom-hover) 100%
+  );
+  --gradient-danger-active: linear-gradient(
+    180deg,
+    var(--danger-gradient-top-active) 0%,
+    var(--danger-gradient-bottom-active) 100%
+  );
+  --gradient-danger-disabled: linear-gradient(
+    180deg,
+    var(--danger-gradient-top-disabled) 0%,
+    var(--danger-gradient-bottom-disabled) 100%
+  );
+
+  --button-transition-ms: 150ms;
+
+  --shadow-hairline: 0 0 0 1px var(--line);
+  --shadow-btn: 0 0 0 1px var(--line-strong), var(--shadow-xs);
+  --shadow-card: 0 0 0 1px var(--line), var(--shadow-sm);
+  --shadow-raised: 0 0 0 1px var(--line), var(--shadow-md);
+  --shadow-overlay: 0 0 0 1px var(--line), var(--shadow-lg);
+  --shadow-inset-field: inset 0 1px 2px oklch(0.22 0.012 265 / 0.08);
+  --shadow-dropdown: var(--shadow-overlay);
+  --shadow-focus: 0 0 0 2px var(--focus-ring);
+}
+
+.dark {
+  --page: oklch(0.17 0 0);
+  --canvas: oklch(0.19 0 0);
+  --surface: oklch(0.22 0 0);
+  --inset: oklch(0.18 0 0);
+  --hover: oklch(0.25 0 0);
+  --hover-2: oklch(0.28 0 0);
+
+  --ink: oklch(0.93 0.006 265);
+  --ink-2: oklch(0.7 0.008 265);
+  --ink-3: oklch(0.52 0.006 265);
+
+  --line: oklch(0.32 0.005 265);
+  --line-strong: oklch(0.38 0.006 265);
+  --line-soft: oklch(0.26 0.004 265);
+  --field: oklch(0.2 0 0);
+  --stripe: oklch(1 0 0 / 0.04);
+  --stripe-bg: var(--canvas);
+
+  --accent: var(--color-accent-400);
+  --accent-ink: var(--color-accent-300);
+  --accent-muted: color-mix(in srgb, var(--color-accent-500) 14%, transparent);
+
+  --schedule: oklch(0.66 0.06 228);
+  --schedule-muted: oklch(0.66 0.06 228 / 0.12);
+
+  --green: oklch(0.66 0.065 158);
+  --green-muted: oklch(0.66 0.065 158 / 0.12);
+
+  --red: oklch(0.66 0.07 22);
+  --red-muted: oklch(0.66 0.07 22 / 0.12);
+
+  --orange: var(--accent);
+  --orange-muted: var(--accent-muted);
+  --people: var(--accent);
+  --people-muted: var(--accent-muted);
+
+  --warning: oklch(0.76 0.09 80);
+  --warning-muted: oklch(0.76 0.09 80 / 0.12);
+
+  --violet: oklch(0.7 0.1 295);
+  --violet-muted: oklch(0.7 0.1 295 / 0.12);
+
+  --chart-1: oklch(0.66 0.13 256);
+  --chart-1-active: oklch(0.74 0.12 254);
+  --chart-2: oklch(0.66 0.09 158);
+  --chart-2-active: oklch(0.74 0.09 158);
+
+  --disabled: oklch(0.52 0.01 265);
+  --disabled-bg: var(--inset);
+
+  --tooltip-bg: oklch(0.14 0.004 265);
+  --tooltip-fg: oklch(0.92 0.008 265);
+  --tooltip-muted: oklch(0.62 0.012 265);
+  --tooltip-border: oklch(0.28 0.008 265);
+
+  --terminal-bg: oklch(0.14 0.006 265);
+  --terminal-fg: oklch(0.9 0.008 265);
+  --terminal-fg-muted: oklch(0.66 0.01 265);
+  --terminal-fg-subtle: oklch(0.5 0.01 265);
+  --terminal-border: oklch(1 0 0 / 0.08);
+  --terminal-hover: oklch(1 0 0 / 0.06);
+  --terminal-caret: oklch(0.9 0.008 265 / 0.92);
+
+  --shadow-hairline: 0 0 0 1px var(--line);
+  --shadow-btn: 0 0 0 1px oklch(1 0 0 / 0.1), 0 1px 2px oklch(0 0 0 / 0.3);
+  --shadow-card:
+    0 0 0 1px oklch(1 0 0 / 0.11), 0 1px 2px oklch(0 0 0 / 0.2),
+    0 2px 6px oklch(0 0 0 / 0.2);
+  --shadow-raised:
+    0 0 0 1px oklch(1 0 0 / 0.13), 0 2px 10px oklch(0 0 0 / 0.22);
+  --shadow-overlay:
+    0 0 0 1px oklch(1 0 0 / 0.15), 0 8px 28px oklch(0 0 0 / 0.34);
+  --shadow-inset-field: inset 0 1px 2px oklch(0 0 0 / 0.4);
+  --shadow-dropdown: var(--shadow-overlay);
+
+  --gradient-accent-fg: var(--ink);
+  --gradient-danger-fg: var(--ink);
+
+  --accent-gradient-top: oklch(0.34 0.038 262);
+  --accent-gradient-bottom: oklch(0.26 0.05 264);
+  --accent-gradient-top-hover: oklch(0.36 0.04 262);
+  --accent-gradient-bottom-hover: oklch(0.28 0.052 264);
+  --accent-gradient-top-active: oklch(0.3 0.036 262);
+  --accent-gradient-bottom-active: oklch(0.24 0.048 264);
+  --accent-gradient-top-disabled: oklch(0.22 0.012 265);
+  --accent-gradient-bottom-disabled: oklch(0.18 0.01 265);
+  --gradient-accent-fg-disabled: var(--ink-3);
+
+  --danger-gradient-top: oklch(0.32 0.038 18);
+  --danger-gradient-bottom: oklch(0.24 0.048 18);
+  --danger-gradient-top-hover: oklch(0.34 0.04 18);
+  --danger-gradient-bottom-hover: oklch(0.26 0.05 18);
+  --danger-gradient-top-active: oklch(0.28 0.036 18);
+  --danger-gradient-bottom-active: oklch(0.22 0.044 18);
+  --danger-gradient-top-disabled: oklch(0.22 0.012 265);
+  --danger-gradient-bottom-disabled: oklch(0.18 0.01 265);
+  --gradient-danger-fg-disabled: var(--ink-3);
+}
+
+@theme inline {
+  --color-page: var(--page);
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-inset: var(--inset);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-hover: var(--hover);
+  --color-hover-2: var(--hover-2);
+  --color-field: var(--field);
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-muted: var(--accent-muted);
+  --color-accent-50: var(--color-accent-50);
+  --color-accent-100: var(--color-accent-100);
+  --color-accent-200: var(--color-accent-200);
+  --color-accent-300: var(--color-accent-300);
+  --color-accent-400: var(--color-accent-400);
+  --color-accent-500: var(--color-accent-500);
+  --color-accent-600: var(--color-accent-600);
+  --color-accent-700: var(--color-accent-700);
+  --color-accent-800: var(--color-accent-800);
+  --color-accent-900: var(--color-accent-900);
+  --color-accent-950: var(--color-accent-950);
+  --color-green: var(--green);
+  --color-green-muted: var(--green-muted);
+  --color-orange: var(--orange);
+  --color-orange-muted: var(--orange-muted);
+  --color-red: var(--red);
+  --color-red-muted: var(--red-muted);
+  --color-schedule: var(--schedule);
+  --color-schedule-muted: var(--schedule-muted);
+  --color-people: var(--people);
+  --color-people-muted: var(--people-muted);
+  --color-warning: var(--warning);
+  --color-warning-muted: var(--warning-muted);
+  --color-violet: var(--violet);
+  --color-violet-muted: var(--violet-muted);
+  --color-on-accent: var(--on-accent);
+  --color-chart-1: var(--chart-1);
+  --color-chart-1-active: var(--chart-1-active);
+  --color-chart-2: var(--chart-2);
+  --color-chart-2-active: var(--chart-2-active);
+  --color-chart-track: var(--chart-track);
+  --color-chart-cursor: var(--chart-cursor);
+  --color-disabled: var(--disabled);
+  --color-disabled-bg: var(--disabled-bg);
+  --color-tooltip-fg: var(--tooltip-fg);
+  --color-terminal-bg: var(--terminal-bg);
+  --color-terminal-fg: var(--terminal-fg);
+  --color-terminal-fg-muted: var(--terminal-fg-muted);
+  --color-terminal-fg-subtle: var(--terminal-fg-subtle);
+  --color-gradient-accent-fg: var(--gradient-accent-fg);
+  --color-gradient-danger-fg: var(--gradient-danger-fg);
+
+  --shadow-hairline: var(--shadow-hairline);
+  --shadow-btn: var(--shadow-btn);
+  --shadow-inset-field: var(--shadow-inset-field);
+  --shadow-card: var(--shadow-card);
+  --shadow-raised: var(--shadow-raised);
+  --shadow-overlay: var(--shadow-overlay);
+  --shadow-dropdown: var(--shadow-dropdown);
+  --shadow-focus: var(--shadow-focus);
+  --shadow-nav-selected:
+    0 0 0 1px var(--color-accent-500), inset 0 1px 0 0 oklch(1 0 0 / 0.25);
+  --shadow-checkbox-selected:
+    inset 0 2px 0 0 oklch(1 0 0 / 0.25), inset 0 0 0 1px var(--color-accent-500);
+
+  --font-sans: var(--font-peachy-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-peachy-mono), ui-monospace, "SF Mono", monospace;
+
+  --radius-square: 0px;
+  --radius-chip: 6px;
+  --radius-control: 8px;
+  --radius-card: 16px;
+  --radius-window: 14px;
+  --radius-panel: 10px;
+  --radius-pill: 9999px;
+  --radius-2lg: 10px;
+  --radius-2-5xl: 20px;
+  --radius-notification-card: 10px;
+
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-link: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@utility button-press-motion {
+  transition:
+    background-color var(--button-transition-ms) ease,
+    border-color var(--button-transition-ms) ease,
+    box-shadow var(--button-transition-ms) ease,
+    color var(--button-transition-ms) ease,
+    transform 420ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:active:not(:disabled):not([aria-disabled="true"]) {
+    transform: scale(0.96);
+    transition-duration: 150ms, 150ms, 150ms, 150ms, 220ms;
+  }
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    transform: none;
+  }
+}
+
+@utility bg-gradient-accent {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  color: var(--gradient-accent-fg);
+  background-image: var(--gradient-accent-default);
+  box-shadow: var(--shadow-btn);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    border-radius: inherit;
+    background-image: var(--gradient-accent-hover);
+    opacity: 0;
+    transition: opacity var(--button-transition-ms) ease;
+  }
+
+  &:hover:not(:disabled):not([aria-disabled="true"])::before {
+    opacity: 1;
+  }
+
+  &:active:not(:disabled):not([aria-disabled="true"]) {
+    background-image: var(--gradient-accent-active);
+  }
+
+  &:active:not(:disabled):not([aria-disabled="true"])::before {
+    opacity: 0;
+  }
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    color: var(--gradient-accent-fg-disabled);
+    background-image: var(--gradient-accent-disabled);
+  }
+
+  &:disabled::before,
+  &[aria-disabled="true"]::before {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::before {
+      transition: none;
+    }
+  }
+}
+
+/* Nav selection pill — accent gradient with an inset hairline instead of
+   --shadow-btn. Outer box-shadow is clipped by overflow-y scrollports
+   (which also clip on the x axis); use this on sidebar / studio nav thumbs. */
+@utility bg-nav-selection {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  color: var(--gradient-accent-fg);
+  background-image: var(--gradient-accent-default);
+  box-shadow: inset 0 0 0 1px
+    color-mix(in oklch, var(--line-strong) 72%, transparent);
+}
+
+/* Borrow horizontal space from the rail's padding (see sidebar-nav-chrome.ts). */
+@utility sidebar-nav-scroller {
+  overflow-y: auto;
+  scrollbar-width: none;
+  margin: -0.75rem;
+  width: calc(100% + 1.5rem);
+  padding-block: 0.75rem;
+  padding-inline: 0.75rem;
+}
+
+@utility sidebar-nav-scroller-expanded {
+  padding-inline: 0.875rem;
+}
+
+@utility bg-gradient-danger {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  color: var(--gradient-danger-fg);
+  background-image: var(--gradient-danger-default);
+  box-shadow: var(--shadow-btn);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    border-radius: inherit;
+    background-image: var(--gradient-danger-hover);
+    opacity: 0;
+    transition: opacity var(--button-transition-ms) ease;
+  }
+
+  &:hover:not(:disabled):not([aria-disabled="true"])::before {
+    opacity: 1;
+  }
+
+  &:active:not(:disabled):not([aria-disabled="true"]) {
+    background-image: var(--gradient-danger-active);
+  }
+
+  &:active:not(:disabled):not([aria-disabled="true"])::before {
+    opacity: 0;
+  }
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    color: var(--gradient-danger-fg-disabled);
+    background-image: var(--gradient-danger-disabled);
+  }
+
+  &:disabled::before,
+  &[aria-disabled="true"]::before {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::before {
+      transition: none;
+    }
+  }
+}
+
+@utility text-gradient-accent-fg {
+  color: var(--gradient-accent-fg);
+}
+
+@utility text-gradient-danger-fg {
+  color: var(--gradient-danger-fg);
+}
+
+@utility tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+@utility media-outline {
+  outline: 1px solid oklch(0 0 0 / 0.1);
+  outline-offset: 0;
+}
+
+.dark .media-outline {
+  outline-color: oklch(1 0 0 / 0.1);
+}
+
+/* ── base ─────────────────────────────────────────────── */
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-peachy-sans), ui-sans-serif, system-ui, sans-serif;
+  font-synthesis: none;
+  background-color: var(--stripe-bg);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent 0,
+    transparent 7px,
+    var(--stripe) 7px,
+    var(--stripe) 8px
+  );
+  background-attachment: fixed;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -0.15px;
+  line-height: 1.5;
+}
+
+/* Light weight is reserved for placeholder and hint text. */
+::placeholder {
+  font-weight: 300;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--line-strong) 48%, transparent)
+    transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: color-mix(in srgb, var(--line-strong) 42%, transparent);
+  border: 2px solid transparent;
+  border-radius: 9999px;
+  background-clip: padding-box;
+}
+
+@media (hover: hover) {
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: color-mix(in srgb, var(--line-strong) 62%, transparent);
+  }
+}
+
+.text-page-title {
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.text-section-title {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--ink);
+}
+
+.text-body {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.text-body-strong {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.text-meta {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--ink-2);
+}
+
+.text-caption {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--ink-3);
+}
+
+.text-micro {
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+.text-overline {
+  font-size: 10.5px;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.text-gutter {
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.text-code {
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  font-family: var(--font-mono-face);
+}
+
+.text-metric {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.text-cta {
+  display: inline-flex;
+  height: 27px;
+  align-items: center;
+  border-radius: var(--radius-pill);
+  padding-inline: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--ink);
+  transition: background-color 150ms ease-out;
+}
+
+.text-cta:hover {
+  background-color: var(--hover);
+}
+
+::selection {
+  background: var(--accent-muted);
+  color: var(--ink);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+a {
+  text-underline-position: from-font;
+  text-decoration-skip-ink: auto;
+}
+
+.theme-switching *,
+.theme-switching *::before,
+.theme-switching *::after {
+  transition: none !important;
+}
+
+.component-nav-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.component-nav-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+@media (min-width: 64rem) {
+  .component-nav-scroll {
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      oklch(0 0 0) 0,
+      oklch(0 0 0) calc(100% - 6rem),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      oklch(0 0 0) 0,
+      oklch(0 0 0) calc(100% - 6rem),
+      transparent 100%
+    );
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .primitive-showcase {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  .primitive-showcase
+    :is(input, textarea, [contenteditable="true"], pre, code) {
+    -webkit-user-select: text;
+    user-select: text;
+    -webkit-touch-callout: default;
+  }
+
+  .primitive-showcase :is(a, button, [role="button"]) {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .primitive-showcase :is(a, button, [role="button"]):focus-visible {
+    outline: none;
+  }
+
+  .primitive-showcase :is(img, svg, canvas) {
+    -webkit-user-drag: none;
+  }
+}
+
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+label:has(input),
+a {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+  border-radius: var(--focus-ring-radius);
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[contenteditable]:focus-visible {
+  outline: none;
+}
+
+.animated-underline {
+  position: relative;
+  display: inline-block;
+}
+
+.animated-underline::after {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 1px;
+  content: "";
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 280ms var(--ease-link);
+}
+
+a:hover .animated-underline::after,
+a:focus-visible .animated-underline::after {
+  transform: scaleX(1);
+}
+
+.primitive-card-pad {
+  padding: 12px;
+}
+
+.primitive-card-bar {
+  padding: 10px 12px;
+}
+
+.primitive-card-footer {
+  padding: 10px;
+}
+
+.primitive-table-cell {
+  padding: 10px 12px;
+}
+
+.primitive-icon-button {
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-control);
+}
+
+@keyframes shimmer-text {
+  from {
+    background-position: 150% center;
+  }
+  to {
+    background-position: -50% center;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Gateway lanes: one dash period, so the dotted stream loops without a jump. */
+@keyframes route-flow {
+  to {
+    stroke-dashoffset: var(--route-shift);
+  }
+}
+
+.route-flow {
+  animation-name: route-flow;
+  animation-duration: var(--route-duration, 0.7s);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes border-beam-spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+.border-beam-spin {
+  transform: translate(-50%, -50%);
+  animation: border-beam-spin 3.6s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .border-beam-spin {
+    animation: none;
+  }
+}
+
+/* Prompt bar dictation: equalizer bars plus a soft ring on the mic. */
+.prompt-eq-bar {
+  height: 100%;
+  transform-origin: center;
+  transform: scaleY(0.7);
+}
+
+@keyframes prompt-eq-bounce {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes prompt-mic-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in oklch, var(--accent) 32%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 5px color-mix(in oklch, var(--accent) 0%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .prompt-eq-bar {
+    animation: prompt-eq-bounce 900ms ease-in-out infinite;
+  }
+
+  .prompt-mic-live {
+    animation: prompt-mic-pulse 1.6s cubic-bezier(0.23, 1, 0.32, 1) infinite;
+  }
+}
+
+@keyframes work-pulse-slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.work-pulse-band::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklch, var(--accent) 55%, transparent),
+    transparent
+  );
+  animation: work-pulse-slide 1.6s ease-in-out infinite;
+}
+
+.work-pulse-stripe {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--stripe-bg),
+    var(--stripe-bg) 8px,
+    var(--stripe) 8px,
+    var(--stripe) 16px
+  );
+  background-size: 200% 200%;
+  animation: work-pulse-slide 2.4s linear infinite;
+}
+
+@keyframes work-pulse-breathe {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.work-pulse-dot {
+  animation: work-pulse-breathe 1.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .work-pulse-band::after,
+  .work-pulse-stripe,
+  .work-pulse-dot {
+    animation: none;
+  }
+}
+
+@keyframes status-breathe {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.stream-tail {
+  filter: blur(1.6px);
+  -webkit-mask-image: linear-gradient(
+    to right,
+    oklch(0 0 0) 20%,
+    oklch(0 0 0 / 0.2)
+  );
+  mask-image: linear-gradient(to right, oklch(0 0 0) 20%, oklch(0 0 0 / 0.2));
+}
+
+/* Streaming edge: a sheen travels across the tail characters while tokens
+ * land, on top of the blur+fade — reads as text still being written. */
+@media (prefers-reduced-motion: no-preference) {
+  .stream-tail {
+    color: transparent;
+    background-image: linear-gradient(
+      100deg,
+      var(--ink-3) 30%,
+      var(--ink) 50%,
+      var(--ink-3) 70%
+    );
+    background-position: 150% center;
+    background-size: 300% 100%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    animation: text-shimmer-sweep 1.4s linear infinite;
+  }
+}
+
+.stream-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1.05em;
+  margin-left: 1.5px;
+  translate: 0 -0.5px;
+  border-radius: 1px;
+  background: var(--ink);
+  vertical-align: text-bottom;
+  animation: caret-blink 1s step-end infinite;
+}
+
+.stream-caret.is-streaming {
+  animation: none;
+}
+
+@keyframes caret-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes pixel-on {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  18%,
+  42% {
+    opacity: 1;
+  }
+  62% {
+    opacity: 0.15;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stream-tail {
+    filter: none;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Doc catalog (Liveline-style, Peach tokens) ── */
+
+/* One scroll surface inside the shell — avoids body overscroll showing stripe canvas. */
+html:has(.doc-shell) {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+html:has(.doc-shell) body {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background-color: var(--page);
+  background-image: none;
+}
+
+.doc-shell {
+  --doc-topbar-h: 3.75rem;
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
+.doc-scroll-fade {
+  pointer-events: none;
+  position: fixed;
+  z-index: 9;
+  top: var(--doc-topbar-h);
+  left: 0;
+  right: 0;
+  height: 3.5rem;
+  background: linear-gradient(
+    180deg,
+    var(--page) 0%,
+    color-mix(in oklch, var(--page) 74%, transparent) 20%,
+    color-mix(in oklch, var(--page) 54%, transparent) 34%,
+    color-mix(in oklch, var(--page) 38%, transparent) 47%,
+    transparent 100%
+  );
+}
+
+/* Bottom edge fade — scrolling content dissolves into the margin instead of hard-clipping. */
+.doc-shell::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  z-index: 9;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3.5rem;
+  background: linear-gradient(
+    0deg,
+    var(--page) 0%,
+    color-mix(in oklch, var(--page) 74%, transparent) 20%,
+    color-mix(in oklch, var(--page) 54%, transparent) 34%,
+    color-mix(in oklch, var(--page) 38%, transparent) 47%,
+    transparent 100%
+  );
+}
+
+/* Top bar — brand left, theme + GitHub right, one shared baseline. */
+.doc-topbar {
+  position: relative;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex: none;
+  height: var(--doc-topbar-h);
+  padding-inline: clamp(1rem, 2vw, 1.5rem) clamp(1.25rem, 3vw, 3rem);
+  background: var(--page);
+}
+
+.doc-topbar-side {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.doc-utilities {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.doc-utility-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  color: var(--ink-3);
+  background: var(--surface);
+  box-shadow: var(--shadow-btn);
+  transition:
+    color 150ms ease,
+    transform 150ms ease;
+}
+
+.doc-utility-link:hover {
+  color: var(--ink-2);
+  transform: scale(1.04);
+}
+
+/* Hamburger trigger — hidden on desktop, shown by the ≤768px block below. */
+.doc-nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex: none;
+  color: var(--ink-3);
+  transition: color 150ms ease;
+}
+
+.doc-nav-toggle:hover {
+  color: var(--ink);
+}
+
+.doc-nav-toggle:focus-visible,
+.doc-nav-toggle[data-focus-visible] {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.doc-frame {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  align-items: flex-start;
+  gap: clamp(2.5rem, 5vw, 5rem);
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding: 1rem clamp(1.25rem, 3vw, 3rem) 0 clamp(1rem, 2vw, 1.5rem);
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+
+@media (min-width: 1024px) {
+  .doc-frame {
+    padding: 1.25rem clamp(2rem, 4vw, 4rem) 0 1.5rem;
+  }
+
+  .doc-topbar {
+    padding-inline: 1.5rem clamp(2rem, 4vw, 4rem);
+  }
+}
+
+@media (max-width: 768px) {
+  .doc-shell {
+    --doc-topbar-h: 3.5rem;
+  }
+
+  .doc-topbar {
+    padding-inline: 1rem;
+  }
+
+  .doc-frame {
+    padding-top: 1rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .doc-scroll-fade {
+    height: 4rem;
+  }
+
+  /* The sidebar yields to the hamburger sheet; the hook gate in doc-layout
+   * unmounts it, this covers the pre-hydration frame. */
+  .doc-aside {
+    display: none;
+  }
+
+  .doc-nav-toggle {
+    display: inline-flex;
+  }
+
+  /* Demos wider than the phone get their own scroll lane instead of
+   * clipping under .doc-main's overflow-x hidden. */
+  .doc-demo {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+.doc-aside {
+  height: 100%;
+  flex: none;
+  width: 13rem;
+  padding-inline-end: 0.75rem;
+  padding-bottom: 1rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.doc-aside::-webkit-scrollbar {
+  display: none;
+}
+
+.doc-main {
+  height: 100%;
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-inline: clamp(0.5rem, 3vw, 2.5rem);
+  padding-top: 0.25rem;
+  padding-bottom: 3rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.doc-main::-webkit-scrollbar {
+  display: none;
+}
+
+.doc-main:has(.doc-catalog-home) {
+  max-width: none;
+}
+
+.doc-catalog-home .doc-article {
+  max-width: 70ch;
+}
+
+.doc-nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.doc-nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  letter-spacing: -0.02rem;
+  color: var(--ink);
+}
+
+.doc-nav-brand:hover {
+  color: var(--ink-2);
+}
+
+.doc-nav-group {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+}
+
+.doc-nav > .doc-nav-group:first-child {
+  margin-top: 0.25rem;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.doc-nav-group--tail {
+  margin-top: auto;
+  padding-top: 1.25rem;
+}
+
+.doc-nav-heading {
+  padding-bottom: 0.625rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.0025rem;
+  color: var(--ink-2);
+}
+
+.doc-nav-list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 0.75rem;
+}
+
+.doc-nav-list::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--line);
+}
+
+.doc-nav-list li {
+  position: relative;
+}
+
+.doc-nav-link {
+  display: flex;
+  align-items: center;
+  min-height: 2rem;
+  padding: 0.375rem 0.625rem;
+  border-radius: var(--radius-control);
+  font-size: 0.875rem;
+  font-weight: 460;
+  line-height: 1.25;
+  letter-spacing: -0.0025rem;
+  color: var(--ink-3);
+  transition:
+    color 100ms ease,
+    background-color 100ms ease;
+}
+
+.doc-nav-link:hover {
+  color: var(--ink);
+  background: var(--hover);
+}
+
+.doc-nav-link-active,
+.doc-nav-list li[data-active="true"] .doc-nav-link,
+.nav-tree-list li[data-active="true"] .doc-nav-link {
+  color: var(--ink);
+  background: var(--hover);
+  font-weight: 500;
+}
+
+/* Tree nav — a wire trunk drops from the group icon with elbows reaching each
+ * leaf. Hover ghost-draws an accent route, click sends a pulse down it, and
+ * the route stays lit for the current page. */
+.nav-tree {
+  position: relative;
+}
+
+.nav-tree-root {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0 0 0.625rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.0025rem;
+  color: var(--ink-2);
+  text-decoration: none;
+  transition: color 100ms ease;
+}
+
+a.nav-tree-root:hover,
+.nav-tree-root[data-active="true"] {
+  color: var(--ink);
+}
+
+.nav-tree-icon {
+  display: grid;
+  place-items: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--ink-3);
+  transition: color 120ms ease;
+}
+
+.nav-tree[data-live] .nav-tree-icon,
+a.nav-tree-root:hover .nav-tree-icon {
+  color: var(--accent);
+}
+
+.nav-tree-icon[data-sent] {
+  animation: nav-tree-send 340ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes nav-tree-send {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(0.72) translateY(1px);
+  }
+  70% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.nav-tree-list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 1.375rem;
+}
+
+.nav-tree-list li {
+  position: relative;
+}
+
+.nav-tree-wires {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.nav-tree-trunk,
+.nav-tree-elbow {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1px;
+}
+
+/* pathLength=1 normalizes dash math: offset 1 hides, 0 fully draws the route. */
+.nav-tree-wire {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.25px;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  opacity: 0;
+  transition:
+    stroke-dashoffset 260ms cubic-bezier(0.35, 0.6, 0.2, 1),
+    opacity 160ms ease;
+}
+
+.nav-tree-wire.is-ghost {
+  stroke-dashoffset: 0;
+  opacity: 0.3;
+}
+
+.nav-tree-wire.is-travel,
+.nav-tree-wire.is-active {
+  stroke-dashoffset: 0;
+  opacity: 1;
+}
+
+.nav-tree-dot {
+  fill: var(--accent);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nav-tree-dot {
+    animation: nav-tree-dot-in 200ms cubic-bezier(0.2, 0, 0, 1) both;
+  }
+}
+
+@keyframes nav-tree-dot-in {
+  from {
+    opacity: 0;
+    transform: scale(0.25);
+  }
+}
+
+/* Click signal — rides the route path from the icon to the leaf. */
+.nav-tree-pulse {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow:
+    0 0 0 3px color-mix(in oklch, var(--accent) 18%, transparent),
+    0 0 10px color-mix(in oklch, var(--accent) 40%, transparent);
+  pointer-events: none;
+  animation: nav-tree-travel 320ms cubic-bezier(0.4, 0.5, 0.2, 1) both;
+}
+
+@keyframes nav-tree-travel {
+  from {
+    offset-distance: 0%;
+  }
+  to {
+    offset-distance: 100%;
+  }
+}
+
+.nav-tree-burst {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  color: var(--accent);
+  pointer-events: none;
+  animation: nav-tree-burst 420ms cubic-bezier(0.2, 0, 0, 1) both;
+}
+
+@keyframes nav-tree-burst {
+  0% {
+    opacity: 0;
+    transform: scale(0.25) rotate(-24deg);
+    filter: blur(2px);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1.15) rotate(8deg);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.9) rotate(24deg);
+    filter: blur(1px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-tree-wire {
+    transition: none;
+  }
+  .nav-tree-icon[data-sent],
+  .nav-tree-pulse,
+  .nav-tree-burst {
+    display: none;
+    animation: none;
+  }
+}
+
+/* Hover/focus preview card — a live miniature of the block demo. */
+.doc-nav-preview {
+  position: fixed;
+  z-index: 30;
+  width: 19rem;
+  padding: 0.5rem;
+  border-radius: var(--radius-window);
+  background: var(--surface);
+  box-shadow: var(--shadow-overlay);
+  pointer-events: none;
+}
+
+.doc-nav-preview-title {
+  padding: 0.125rem 0.375rem 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.0025rem;
+  color: var(--ink-2);
+}
+
+.doc-nav-preview-stage {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-panel);
+  background: var(--page);
+  box-shadow: inset 0 0 0 1px var(--line-soft);
+}
+
+/* Even 12px pad left/right/top; bottom pad applies only when the demo fits.
+ * Sized to the scaled footprint and centered in the stage when narrower. */
+.doc-nav-preview-body {
+  margin: 0.75rem auto 0;
+  overflow: hidden;
+}
+
+.doc-nav-preview-demo {
+  transform-origin: top left;
+  pointer-events: none;
+}
+
+/* Fixed .doc-article column — definite width so w-full and container queries
+ * resolve exactly as they do on the demo page; offsetParent for footprint
+ * measurement. */
+.doc-nav-preview-frame {
+  position: relative;
+  width: 42rem;
+}
+
+/* Progressive dissolve — blur ramps up toward the clipped bottom edge. */
+.doc-nav-preview-fade {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 3.5rem;
+  background: linear-gradient(
+    to top,
+    var(--page) 0%,
+    color-mix(in oklch, var(--page) 60%, transparent) 55%,
+    transparent 100%
+  );
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  -webkit-mask-image: linear-gradient(to top, black 25%, transparent 100%);
+  mask-image: linear-gradient(to top, black 25%, transparent 100%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .doc-nav-preview {
+    animation: doc-nav-preview-in 160ms cubic-bezier(0.2, 0, 0, 1) both;
+  }
+}
+
+@keyframes doc-nav-preview-in {
+  from {
+    opacity: 0;
+    transform: translateX(-0.375rem) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Mobile nav sheet — the nav tree in a left-edge drawer over a dimmed page.
+ * React Aria drives enter/exit via data-entering/data-exiting. */
+.doc-nav-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: color-mix(in oklch, var(--ink) 25%, transparent);
+}
+
+.doc-nav-sheet {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: min(20rem, 85vw);
+  background: var(--surface);
+  border-right: 1px solid var(--line);
+  box-shadow: var(--shadow-overlay);
+  outline: none;
+}
+
+.doc-nav-sheet-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  outline: none;
+}
+
+.doc-nav-sheet-head {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-top: max(0.875rem, env(safe-area-inset-top));
+  padding-bottom: 0.875rem;
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.doc-nav-sheet-scroll {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0.75rem 1rem max(1.5rem, env(safe-area-inset-bottom));
+  padding-left: max(1rem, env(safe-area-inset-left));
+}
+
+/* Stretch the nav to the drawer height so the templates group can pin to
+ * the bottom, same as the sidebar. */
+.doc-nav-sheet-scroll .doc-nav {
+  flex: 1;
+}
+
+.doc-nav-sheet-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: none;
+  border-radius: 9999px;
+  color: var(--ink-2);
+  background: var(--hover-2);
+  transition: background-color 150ms ease;
+}
+
+.doc-nav-sheet-close:hover {
+  background: var(--line);
+}
+
+.doc-nav-sheet-close:focus-visible,
+.doc-nav-sheet-close[data-focus-visible] {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .doc-nav-sheet-overlay[data-entering] {
+    animation: doc-nav-sheet-fade-in 200ms ease-out both;
+  }
+
+  .doc-nav-sheet-overlay[data-exiting] {
+    animation: doc-nav-sheet-fade-out 160ms ease-in both;
+  }
+
+  .doc-nav-sheet[data-entering] {
+    animation: doc-nav-sheet-in 240ms cubic-bezier(0.2, 0, 0, 1) both;
+  }
+
+  .doc-nav-sheet[data-exiting] {
+    animation: doc-nav-sheet-out 180ms cubic-bezier(0.4, 0, 1, 1) both;
+  }
+}
+
+@keyframes doc-nav-sheet-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes doc-nav-sheet-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes doc-nav-sheet-in {
+  from {
+    opacity: 0;
+    transform: translateX(-2rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes doc-nav-sheet-out {
+  to {
+    opacity: 0;
+    transform: translateX(-2rem);
+  }
+}
+
+.doc-article {
+  width: 100%;
+  max-width: 42rem;
+}
+
+.doc-article--wide {
+  max-width: min(100%, 72rem);
+}
+
+.doc-demo-stage--wide {
+  align-items: stretch;
+}
+
+.doc-article--wide .doc-demo {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.doc-article-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-bottom: 1rem;
+}
+
+.doc-article-kicker {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.doc-article-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.00813rem;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.doc-article-lead {
+  font-size: 0.875rem;
+  font-weight: 460;
+  line-height: 1.45;
+  letter-spacing: -0.00563rem;
+  color: var(--ink-3);
+  text-wrap: pretty;
+  max-width: 58ch;
+}
+
+.doc-prose {
+  padding-top: 1rem;
+  font-size: 0.875rem;
+  font-weight: 460;
+  line-height: 1.25rem;
+  letter-spacing: -0.00563rem;
+  color: var(--ink-2);
+}
+
+.doc-prose-muted {
+  color: var(--ink-3);
+}
+
+/* Landing hero: centered copy with the hairline figure plate below. */
+.doc-article--home {
+  max-width: min(100%, 36rem);
+}
+
+.doc-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+  text-align: center;
+}
+
+.doc-hero-copy .doc-article-lead {
+  margin-inline: auto;
+}
+
+.doc-hero-fig {
+  width: 100%;
+  max-width: 26rem;
+}
+
+.doc-hero-fig-stage {
+  width: 100%;
+  animation: doc-hero-fig-in 320ms ease-out;
+}
+
+@keyframes doc-hero-fig-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doc-hero-fig-stage {
+    animation: none;
+  }
+}
+
+.doc-demo {
+  margin: 2.5rem 0 3.5rem;
+  width: 100%;
+}
+
+.doc-demo-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Overflowing demos fall back to start alignment so the scroll lane
+   * reaches the left edge instead of clipping it. Ignored where unsupported. */
+  align-items: safe center;
+  width: 100%;
+  min-width: 0;
+  gap: 2rem;
+}
+
+.doc-meta {
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+  color: var(--ink-2);
+}
+
+.doc-source-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.doc-source-button {
+  display: inline-flex;
+  align-items: center;
+  height: 2rem;
+  padding: 0 0.75rem;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ink-2);
+  box-shadow: var(--shadow-btn);
+  transition:
+    background-color 100ms ease,
+    color 100ms ease;
+}
+
+.doc-source-button:hover {
+  background: var(--hover);
+  color: var(--ink);
+}
+
+.doc-code-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 1rem;
+}
+
+@media (min-width: 640px) {
+  .doc-code-overlay {
+    align-items: center;
+  }
+}
+
+.doc-code-overlay-backdrop {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in oklch, var(--ink) 25%, transparent);
+}
+
+.doc-code-overlay-panel {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 42rem);
+  max-height: min(85vh, 32rem);
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow-overlay);
+}
+
+.doc-code-pre {
+  margin: 0;
+  font-family: var(--font-mono-face);
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.doc-source-path {
+  margin-top: 2rem;
+  font-family: var(--font-mono-face);
+  font-size: 0.6875rem;
+  color: var(--ink-3);
+}
+
+.doc-text-link {
+  color: var(--ink-2);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: color-mix(in oklch, var(--ink-3) 55%, transparent);
+  transition:
+    color 100ms ease,
+    text-decoration-color 100ms ease;
+}
+
+.doc-text-link:hover {
+  color: var(--ink);
+  text-decoration-color: var(--ink-3);
+}
+
+.doc-index-list {
+  list-style: none;
+  margin: 0;
+  padding: 1rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.35;
+}
+
+.doc-composed-list {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+/* ── Component library (atoms / primitives / blocks) ── */
+
+html {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+/* Theme toggle reveals the next palette from the click point; only the
+ * injected clip-path animation runs, no native crossfade. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 2;
+}
+
+.theme-asset-dark {
+  display: none;
+}
+
+.dark .theme-asset-light {
+  display: none;
+}
+
+.dark .theme-asset-dark {
+  display: block;
+}
+
+details summary::-webkit-details-marker {
+  display: none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
+/* iOS Safari zooms fields under 16px; the type scale's 14px body stays on desktop. */
+@media (max-width: 639px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+@keyframes text-shimmer-sweep {
+  from {
+    background-position: 200% center;
+  }
+  to {
+    background-position: -100% center;
+  }
+}
+
+.agent-progress-loading-text {
+  --agent-shimmer-base: var(--ink-2);
+  --agent-shimmer-peak: var(--ink);
+  color: transparent;
+  background-image: linear-gradient(
+    100deg,
+    var(--agent-shimmer-base) 16%,
+    var(--agent-shimmer-base) 38%,
+    var(--agent-shimmer-peak) 50%,
+    var(--agent-shimmer-base) 62%,
+    var(--agent-shimmer-base) 84%
+  );
+  background-position: 200% center;
+  background-size: 300% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: text-shimmer-sweep 3.4s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agent-progress-loading-text {
+    color: var(--agent-shimmer-base);
+    background-image: none;
+    animation: none;
+  }
+}
+
+@keyframes number-fade {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-number-fade {
+  animation: number-fade 220ms ease-out;
+}
+
+/* Charts drive their own hover feedback; hide the UA focus box on SVG shapes. */
+.recharts-wrapper:focus,
+.recharts-wrapper:focus-visible,
+.recharts-wrapper :focus,
+.recharts-wrapper :focus-visible {
+  outline: none;
+}
+
+/* Storage table row enter/exit: the grid track grows while content slides
+ * from under the row above; the fade finishes before the movement does. */
+@keyframes row-grow-in {
+  from {
+    grid-template-rows: 0fr;
+  }
+  to {
+    grid-template-rows: 1fr;
+  }
+}
+
+@keyframes row-slide-in {
+  from {
+    translate: 0 -100%;
+  }
+}
+
+@keyframes row-fade-in {
+  from {
+    opacity: 0;
+    filter: blur(2px);
+  }
+}
+
+.animate-row-grow-in {
+  animation: row-grow-in 400ms ease-out;
+}
+
+.animate-row-slide-in {
+  animation:
+    row-slide-in 400ms ease-out,
+    row-fade-in 240ms ease-out;
+}
+
+@keyframes row-collapse-out {
+  from {
+    grid-template-rows: 1fr;
+  }
+  to {
+    grid-template-rows: 0fr;
+  }
+}
+
+@keyframes row-slide-out {
+  to {
+    translate: 0 -100%;
+  }
+}
+
+@keyframes row-fade-out {
+  to {
+    opacity: 0;
+    filter: blur(2px);
+  }
+}
+
+.animate-row-collapse-out {
+  animation: row-collapse-out 225ms ease-in forwards;
+}
+
+.animate-row-slide-out {
+  animation:
+    row-slide-out 225ms ease-in forwards,
+    row-fade-out 160ms ease-in forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-row-grow-in,
+  .animate-row-slide-in,
+  .animate-row-collapse-out,
+  .animate-row-slide-out {
+    animation-duration: 1ms;
+  }
+}
+
+/* Staggered text reveal (file upload content swaps). Exit is a plain fade. */
+.t-stagger {
+  --stagger-dur: 500ms;
+  --stagger-distance: 12px;
+  --stagger-stagger: 40ms;
+  --stagger-blur: 3px;
+  --stagger-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.t-stagger-line {
+  opacity: 0;
+  transform: translateY(var(--stagger-distance));
+  filter: blur(var(--stagger-blur));
+  transition:
+    opacity var(--stagger-dur) var(--stagger-ease),
+    transform var(--stagger-dur) var(--stagger-ease),
+    filter var(--stagger-dur) var(--stagger-ease);
+}
+
+.t-stagger-line--2 {
+  transition-delay: var(--stagger-stagger);
+}
+
+.t-stagger-line--3 {
+  transition-delay: calc(var(--stagger-stagger) * 2);
+}
+
+.t-stagger.is-shown .t-stagger-line {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+.t-stagger.is-hiding .t-stagger-line {
+  opacity: 0;
+  transform: translateY(0);
+  filter: blur(0);
+  transition:
+    opacity 200ms ease,
+    transform 0s linear,
+    filter 0s linear;
+  transition-delay: 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-stagger-line {
+    transition: none !important;
+  }
+}
+
+@keyframes label-out {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+}
+
+@keyframes label-in {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-label-out {
+  animation: label-out 220ms ease-out forwards;
+}
+
+.animate-label-in {
+  animation: label-in 220ms ease-out;
+}
+
+/* Checkbox tick drawn on; the path uses pathLength=1. */
+@keyframes check-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-check-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: check-draw 200ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-check-draw {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Table atom: React Aria collection parts can't be wrapped, so styling is scoped here. */
+.peach-table {
+  @apply w-full border-collapse text-start;
+}
+
+.peach-table th {
+  @apply px-3 py-2.5 text-start align-middle text-body-medium text-ink-3 whitespace-nowrap outline-none;
+  background-color: var(--canvas);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  transition:
+    padding 200ms ease,
+    font-size 200ms ease;
+}
+
+.peach-table td {
+  @apply px-3 py-2.5 align-middle text-body-medium text-ink outline-none;
+  transition:
+    padding 200ms ease,
+    font-size 200ms ease;
+}
+
+.peach-table tbody tr:not(:last-child) {
+  border-bottom: 1px solid var(--line);
+}
+
+.peach-table tbody tr {
+  @apply transition-colors duration-150;
+}
+
+.peach-table tbody tr[data-focus-visible] {
+  @apply ring-2 ring-inset ring-accent;
+}
+
+.peach-table.peach-table-sm th,
+.peach-table.peach-table-sm td {
+  @apply px-2.5 py-1.5 text-body-2-medium;
+}
+
+/* Agent thinking: label shimmer derives from the tone set via --peach-agent-thinking-tone. */
+.peach-agent-thinking-label {
+  color: transparent;
+  background-image: linear-gradient(
+    100deg,
+    color-mix(in oklab, var(--peach-agent-thinking-tone) 55%, transparent) 30%,
+    var(--peach-agent-thinking-tone) 50%,
+    color-mix(in oklab, var(--peach-agent-thinking-tone) 55%, transparent) 70%
+  );
+  background-position: 200% center;
+  background-size: 300% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: text-shimmer-sweep 2.6s linear infinite;
+}
+
+/* Wave: dots lift in sequence — the typing-bounce envelope. Per-dot
+   animation-delay (negative, set inline) staggers the wave. */
+@keyframes peach-agent-thinking-wave {
+  0%,
+  55%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  28% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
+
+.peach-agent-thinking-wave-dot {
+  animation: peach-agent-thinking-wave 1.1s ease-in-out infinite;
+}
+
+/* Bloom: hairline rings swell from the centre dot and fade — staggered into
+   sonar by the inline negative delay. */
+@keyframes peach-agent-thinking-ring {
+  0% {
+    transform: scale(0.15);
+    opacity: 0.5;
+  }
+  70% {
+    opacity: 0.1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.peach-agent-thinking-ring {
+  animation: peach-agent-thinking-ring 1.8s ease-out infinite;
+}
+
+/* Sweep: a soft band scans the window, then rests a beat between passes. */
+@keyframes peach-agent-thinking-scan {
+  0% {
+    transform: translateX(-8px);
+    opacity: 0;
+  }
+  20%,
+  75% {
+    opacity: 0.85;
+  }
+  90%,
+  100% {
+    transform: translateX(17px);
+    opacity: 0;
+  }
+}
+
+.peach-agent-thinking-scan {
+  animation: peach-agent-thinking-scan 1.6s ease-in-out infinite;
+}
+
+@keyframes peach-agent-thinking-star {
+  0%,
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  60% {
+    transform: scale(0.8);
+    opacity: 0.9;
+  }
+}
+
+.peach-agent-thinking-star {
+  transform: scale(0);
+  animation-name: peach-agent-thinking-star;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes peach-agent-thinking-dash {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+.peach-agent-thinking-comet {
+  animation-name: peach-agent-thinking-dash;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+/* Orbs: glowing dots orbit a shared centre at different radii and speeds —
+   a small planetary system for the thinking state. Each ring wrapper rotates;
+   the inline rotate on it is only the reduced-motion resting spread. */
+@keyframes peach-agent-thinking-orbit {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+.peach-agent-thinking-orbit {
+  animation-name: peach-agent-thinking-orbit;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .peach-agent-thinking-label {
+    color: var(--peach-agent-thinking-tone);
+    background-image: none;
+    animation: none;
+  }
+
+  .peach-agent-thinking-wave-dot,
+  .peach-agent-thinking-ring,
+  .peach-agent-thinking-scan,
+  .peach-agent-thinking-orbit {
+    animation: none;
+  }
+
+  .peach-agent-thinking-star {
+    animation: none;
+    transform: none;
+    opacity: 0.7;
+  }
+
+  .peach-agent-thinking-comet {
+    animation: none;
+  }
+}
+
+.peach-agent-thinking-stars {
+  color: color-mix(in oklab, currentColor 75%, transparent);
+}
+
+.dark .peach-agent-thinking-stars {
+  color: inherit;
+}
+
+/* Composer loader: dash segments lap a pathLength-normalized rim. */
+@keyframes peach-composer-loader-dash {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .peach-composer-loader-rect {
+    animation: none !important;
+  }
+}

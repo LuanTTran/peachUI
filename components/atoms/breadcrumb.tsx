@@ -1,0 +1,109 @@
+import Link from "next/link";
+import { Children, Fragment, isValidElement } from "react";
+import type { ComponentType, ReactNode, Ref } from "react";
+import { ChevronRightSmall } from "@/components/atoms/chevrons";
+import { cx } from "@/lib/utils";
+
+type IconComponent = ComponentType<{
+  className?: string;
+  "aria-hidden"?: boolean | "true" | "false";
+}>;
+
+export interface BreadcrumbProps {
+  children: ReactNode;
+  "aria-label"?: string;
+  className?: string;
+  ref?: Ref<HTMLElement>;
+}
+
+export function Breadcrumb({
+  children,
+  "aria-label": ariaLabel = "Breadcrumb",
+  className,
+  ref,
+}: BreadcrumbProps) {
+  const items = Children.toArray(children).filter(isValidElement);
+
+  return (
+    <nav
+      ref={ref}
+      aria-label={ariaLabel}
+      className={cx(
+        "flex w-full items-center overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+        className,
+      )}
+    >
+      <ol className="flex items-center gap-2.5 px-1">
+        {items.map((item, index) => (
+          <Fragment key={item.key ?? index}>
+            {index > 0 && (
+              <ChevronRightSmall className="size-3 shrink-0 text-ink-3" aria-hidden />
+            )}
+            {item}
+          </Fragment>
+        ))}
+      </ol>
+    </nav>
+  );
+}
+
+export interface BreadcrumbItemProps {
+  children?: ReactNode;
+  icon?: IconComponent;
+  href?: string;
+  onClick?: () => void;
+  current?: boolean;
+  className?: string;
+}
+
+export function BreadcrumbItem({
+  children,
+  icon: Icon,
+  href,
+  onClick,
+  current = false,
+  className,
+}: BreadcrumbItemProps) {
+  const content = (
+    <>
+      {Icon && <Icon className="size-4 shrink-0" aria-hidden />}
+      {children}
+    </>
+  );
+
+  if (current) {
+    return (
+      <li
+        aria-current="page"
+        className={cx(
+          "flex items-center gap-1.5 text-caption-1-medium whitespace-nowrap text-ink-2",
+          className,
+        )}
+      >
+        {content}
+      </li>
+    );
+  }
+
+  const interactiveClass = cx(
+    "-mx-1 flex items-center gap-1.5 rounded-md px-1 py-0.5 text-caption-1-medium whitespace-nowrap text-ink-3",
+    "transition-colors duration-150 ease outline-none",
+    "hover:bg-hover hover:text-ink-2",
+    "focus-visible:ring-2 focus-visible:ring-accent",
+    className,
+  );
+
+  return (
+    <li className="flex items-center">
+      {href ? (
+        <Link href={href} className={interactiveClass}>
+          {content}
+        </Link>
+      ) : (
+        <button type="button" onClick={onClick} className={cx("cursor-pointer", interactiveClass)}>
+          {content}
+        </button>
+      )}
+    </li>
+  );
+}

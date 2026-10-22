@@ -1,0 +1,93 @@
+"use client";
+
+import { useRef } from "react";
+import type { RefObject } from "react";
+import { useDomLayout } from "@/lib/use-dom-layout";
+import { useMountEffect } from "@/lib/use-mount-effect";
+
+/**
+ * React Aria's `Popover` couples "non-modal" with "not dismissable on
+ * outside interaction" — `isNonModal` (which we set to avoid the scroll
+ * lock / focus trap that comes with a modal popover) also silently disables
+ * its built-in outside-click-to-close behavior. This restores just that
+ * piece manually: closes when a pointerdown lands outside every given ref
+ * (typically the trigger + the popover's own content).
+ *
+ * The listener binds once on mount; `isOpen`/`onDismiss`/`refs` are read
+ * through a latest-values mirror kept current every commit, so callers can
+ * pass inline closures and arrays.
+ */
+export function useDismissOnOutsidePress(
+  isOpen: boolean,
+  onDismiss: () => void,
+  refs: RefObject<HTMLElement | null>[],
+) {
+  const latest = useRef({ isOpen, onDismiss, refs });
+  useDomLayout(() => {
+    latest.current = { isOpen, onDismiss, refs };
+  });
+
+  useMountEffect(() => {
+    const handlePointerDown = (event: PointerEvent) => {
+      const { isOpen, onDismiss, refs } = latest.current;
+      if (!isOpen) return;
+      const target = event.target as Node;
+      if (refs.some((ref) => ref.current?.contains(target))) return;
+      onDismiss();
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown, true);
+    return () =>
+      document.removeEventListener("pointerdown", handlePointerDown, true);
+  });
+}
+
+/**
+ * Companion fix for the same `isNonModal` popovers: pressing the trigger
+ * while the popover is open should close it (toggle), but React Aria fires
+ * `onOpenChange(false)` immediately followed by `onOpenChange(true)` within
+ * the same press, so the popover never actually closes.
+ *
+ * This watches for a pointerdown on the trigger while open and swallows the
+ * spurious reopen that follows. Wire the returned guard into the component's
+ * `onOpenChange`:
+ *
+ *   const allowOpenChange = useTriggerToggle(isOpen, triggerRef);
+ *   <AriaSelect onOpenChange={(o) => allowOpenChange(o) && setIsOpen(o)} …
+ */
+export function useTriggerToggle(
+  isOpen: boolean,
+  triggerRef: RefObject<HTMLElement | null>,
+) {
+  const suppressReopenRef = useRef(false);
+  const latest = useRef({ isOpen, triggerRef });
+  useDomLayout(() => {
+    latest.current = { isOpen, triggerRef };
+  });
+
+  useMountEffect(() => {
+    const handlePointerDown = (event: PointerEvent) => {
+      const { isOpen, triggerRef } = latest.current;
+      if (!isOpen) return;
+      if (!triggerRef.current?.contains(event.target as Node)) return;
+      suppressReopenRef.current = true;
+      // Safety valve: only the very next open within this click may be
+      // swallowed; never leave a stale suppression behind.
+      setTimeout(() => {
+        suppressReopenRef.current = false;
+      }, 400);
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown, true);
+    return () =>
+      document.removeEventListener("pointerdown", handlePointerDown, true);
+  });
+
+  return (next: boolean) => {
+    if (next && suppressReopenRef.current) {
+      suppressReopenRef.current = false;
+      return false;
+    }
+    return true;
+  };
+}
